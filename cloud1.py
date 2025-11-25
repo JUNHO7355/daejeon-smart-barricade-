@@ -1,4 +1,20 @@
-import streamlit as st
+for site in construction_sites:
+            folium.Circle(
+                location=[site["lat"], site["lng"]],
+                radius=site["radius"],
+                color="orange",
+                fill=True,
+                fillColor="red",
+                fill_opacity=0.15,
+                weight=2,
+                popup=f"<b>🏗️ {site['name']}</b><br>PM2.5 Impact: {site['pm_increase']}",
+            ).add_to(m)
+            
+            # 공사장 중심 마커
+            folium.Marker(
+                location=[site["lat"], site["lng"]],
+                icon=folium.Icon(color='orange', icon='wrench', prefix='fa'),
+                popup=f"<b>🏗️ {site['nameimport streamlit as st
 import pandas as pd
 import numpy as np
 import io
@@ -71,31 +87,31 @@ if "devices" not in st.session_state:
     
     device_scenarios = {
         "Ben Thanh Market": {
-            "lat": 10.7720, "lng": 106.6980, "battery": 85, "rain": 35,
+            "lat": 10.7720, "lng": 106.6981, "battery": 85, "rain": 35,
             "weather_factor": 1.15, "traffic_factor": 1.25,
             "construction_nearby": False, "sensor_stable": True,
             "priority": 2, "reason": "SW wind spreading construction dust from District 4"
         },
         "District 1 Center": {
-            "lat": 10.7769, "lng": 106.7009, "battery": 72, "rain": 15,
+            "lat": 10.7770, "lng": 106.7010, "battery": 72, "rain": 15,
             "weather_factor": 1.1, "traffic_factor": 1.35,
             "construction_nearby": True, "sensor_stable": True,
             "priority": 1, "reason": "Metro construction within 200m, top priority activation"
         },
         "Tan Son Nhat Airport": {
-            "lat": 10.8186, "lng": 106.6586, "battery": 92, "rain": 80,
+            "lat": 10.8184, "lng": 106.6595, "battery": 92, "rain": 80,
             "weather_factor": 0.9, "traffic_factor": 1.0,
             "construction_nearby": False, "sensor_stable": True,
             "priority": 5, "reason": "Declining trend, normal monitoring"
         },
         "Thu Duc City": {
-            "lat": 10.8505, "lng": 106.7718, "battery": 45, "rain": 60,
+            "lat": 10.8503, "lng": 106.7717, "battery": 45, "rain": 60,
             "weather_factor": 1.0, "traffic_factor": 1.4,
             "construction_nearby": False, "sensor_stable": False,
             "priority": 4, "reason": "Sensor anomaly detected (same reading for 3 hours)"
         },
         "Saigon River Park": {
-            "lat": 10.7878, "lng": 106.7050, "battery": 88, "rain": 45,
+            "lat": 10.7877, "lng": 106.7051, "battery": 88, "rain": 45,
             "weather_factor": 0.95, "traffic_factor": 0.9,
             "construction_nearby": False, "sensor_stable": True,
             "priority": 3, "reason": "Gradual increase trend, preventive monitoring"
@@ -131,14 +147,14 @@ if "devices" not in st.session_state:
         st.session_state.devices.append(d)
     
     st.session_state.construction_sites = [
-        {"name": "District 1 Metro Line Construction", "lat": 10.7780, "lng": 106.6960, "radius": 200, "pm_increase": "+60%"},
-        {"name": "Vo Van Kiet Boulevard Expansion", "lat": 10.7650, "lng": 106.6850, "radius": 300, "pm_increase": "+45%"},
+        {"name": "District 1 Metro Line Construction", "lat": 10.7780, "lng": 106.6995, "radius": 200, "pm_increase": "+60%"},
+        {"name": "Vo Van Kiet Boulevard Expansion", "lat": 10.7590, "lng": 106.6830, "radius": 300, "pm_increase": "+45%"},
     ]
     
     st.session_state.vulnerable_facilities = [
-        {"name": "Sunshine Kindergarten", "lat": 10.7740, "lng": 106.6990, "type": "Kindergarten", "hours": "Pickup time 15:00"},
-        {"name": "Golden Age Senior Center", "lat": 10.7800, "lng": 106.7000, "type": "Senior Center", "hours": "Operating 14:00-17:00"},
-        {"name": "HCMC Central Hospital", "lat": 10.8500, "lng": 106.7700, "type": "Hospital", "hours": "24 hours"},
+        {"name": "Sunshine Kindergarten", "lat": 10.7745, "lng": 106.6970, "type": "Kindergarten", "hours": "Pickup time 15:00"},
+        {"name": "Golden Age Senior Center", "lat": 10.7795, "lng": 106.7025, "type": "Senior Center", "hours": "Operating 14:00-17:00"},
+        {"name": "HCMC Central Hospital", "lat": 10.8485, "lng": 106.7695, "type": "Hospital", "hours": "24 hours"},
     ]
     
     st.session_state.cost_savings = {"power": 18400, "filter": 45000, "maintenance": 12000}
@@ -205,7 +221,7 @@ with tab1:
     
     with col1:
         st.markdown("### 🗺️ Real-time Control Map")
-        m = folium.Map(location=[10.78, 106.70], zoom_start=12, tiles="OpenStreetMap")
+        m = folium.Map(location=[10.7769, 106.6981], zoom_start=13, tiles="OpenStreetMap")
         
         for d in devices:
             popup_html = f"""
@@ -219,13 +235,26 @@ with tab1:
             <img src="{d['qr']}" width="150" height="150" style="display:block; margin:10px auto;">
             </div>
             """
+            
+            # 색상에 따른 아이콘 설정
+            icon_color = 'red' if d['color'] == 'red' else 'green' if d['color'] == 'green' else 'blue'
+            
+            folium.Marker(
+                location=[d["lat"], d["lng"]],
+                popup=folium.Popup(popup_html, max_width=300),
+                icon=folium.Icon(color=icon_color, icon='cloud', prefix='fa'),
+                tooltip=f"{d['name']}: PM2.5 {d['pm_now']}"
+            ).add_to(m)
+            
+            # 추가로 원형 마커도 표시 (더 눈에 잘 띄도록)
             folium.CircleMarker(
                 location=[d["lat"], d["lng"]],
-                radius=12,
+                radius=15,
                 color=d["color"],
                 fill=True,
-                fill_opacity=0.85,
-                popup=folium.Popup(popup_html, max_width=300),
+                fillColor=d["color"],
+                fill_opacity=0.4,
+                weight=3
             ).add_to(m)
         
         for site in construction_sites:
