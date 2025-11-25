@@ -1,20 +1,4 @@
-for site in construction_sites:
-            folium.Circle(
-                location=[site["lat"], site["lng"]],
-                radius=site["radius"],
-                color="orange",
-                fill=True,
-                fillColor="red",
-                fill_opacity=0.15,
-                weight=2,
-                popup=f"<b>🏗️ {site['name']}</b><br>PM2.5 Impact: {site['pm_increase']}",
-            ).add_to(m)
-            
-            # 공사장 중심 마커
-            folium.Marker(
-                location=[site["lat"], site["lng"]],
-                icon=folium.Icon(color='orange', icon='wrench', prefix='fa'),
-                popup=f"<b>🏗️ {site['nameimport streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import io
@@ -236,7 +220,6 @@ with tab1:
             </div>
             """
             
-            # 색상에 따른 아이콘 설정
             icon_color = 'red' if d['color'] == 'red' else 'green' if d['color'] == 'green' else 'blue'
             
             folium.Marker(
@@ -246,7 +229,6 @@ with tab1:
                 tooltip=f"{d['name']}: PM2.5 {d['pm_now']}"
             ).add_to(m)
             
-            # 추가로 원형 마커도 표시 (더 눈에 잘 띄도록)
             folium.CircleMarker(
                 location=[d["lat"], d["lng"]],
                 radius=15,
